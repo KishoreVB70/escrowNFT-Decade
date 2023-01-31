@@ -26,7 +26,7 @@ This is a list of what we’ll cover 🗒
 
 ## **Step 1:** Project setup
 
-Firstly, we will create a new directory for our project. Open your terminal and run the following command to create a new directory called `escrow-nft` and change directory to it.
+Firstly, we will create a new directory for our project. Open your terminal and run the following command to create a new directory called `escrow-nft` and to change directory to it.
 
 ```bash
 mkdir escrow-nft && cd escrow-nft
@@ -91,7 +91,7 @@ MNEMONIC="your mnemonic phrase"
 
 If you want to read more about brownie-config.yaml file, you can read more about it [here](https://eth-brownie.readthedocs.io/en/stable/config.html).
 
-We will also add the mainnet and testnet of the Celo network to our brownie project. Run the following command to add Celo network to our brownie project.
+We will also add the mainnet and alfajores testnet networks of the Celo blockchain to our brownie project. Run the following command to add Celo network to our brownie project.
 
 ```bash
 brownie networks add Celo celo-mainnet host=https://forno.celo.org chainid=42220 explorer=https://explorer.celo.org
