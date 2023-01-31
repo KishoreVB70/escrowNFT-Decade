@@ -1,4 +1,4 @@
-# How to create an Escrow NFT platform on Celo using Eth-Brownie Python.
+# How to create an Escrow NFT platform on Celo using the Eth-Brownie Python package
 
 ## Introduction​
 
@@ -105,7 +105,7 @@ You can check if the network has been added by running the following command.
 brownie networks list
 ```
 
-Results if the network has been added successfully.
+This should be displayed if the network has been added successfully.
 
 ![networks list](images/1.png)
 
@@ -580,7 +580,7 @@ Now that we have written our smart contract, we need to deploy it to the blockch
 brownie compile
 ```
 
-result if the compilation is successful
+This should be displayed if the compilation is successful
 ![brownie compile](images/3.png)
 
 Now, we need to deploy our smart contract to the blockchain. First create a new file `scripts/deploy.py` and add the following code to it.
@@ -611,7 +611,7 @@ brownie run scripts/main.py --network celo-alfajores
 brownie run scripts/main.py --network celo-mainnet
 ```
 
-result if the deployment is successful
+This should be displayed if the deployment is successful
 ![brownie run](images/4.png)
 
 ## **Step 5:** Integration with frontend
@@ -637,17 +637,17 @@ after updating the contract address and ABI, You can run the frontend using the 
 npm start
 ```
 
-result if the frontend is running successfully
+This should be shown if the frontend is running successfully
 ![frontend result](images/5.png)
 
 ## Conclusion
 
-In this tutorial, we have learned how to create an escrow smart contract using Solidity and Brownie. We have also learned how to deploy the smart contract to the Celo blockchain.
+In this tutorial, we learned how to create an escrow smart contract using Solidity and Brownie. We have also learned how to deploy the smart contract to the Celo blockchain.
 
 ## Next Steps
 
-For your next steps, if you a python developer and want to learn how to create a smart contract using python, you can check about vyper. Vyper is a python-based smart contract programming language. You can check the [Vyper documentation](https://vyper.readthedocs.io/en/stable/) to learn more about Vyper.
+For your next steps, if you are a Python developer and want to learn more about how to create a smart contract using Python, you can check about Vyper which is a Python-based smart contract programming language. You can check the [Vyper documentation](https://vyper.readthedocs.io/en/stable/) to learn more about Vyper.
 
 ## About the Author
 
-I am a blockchain and crypto enthusiast. I am also a software engineer. I love to learn new things and share my knowledge with others. You can find me on [GitHub](https://github.com/yafiabiyyu) and [LinkedIn](https://www.linkedin.com/in/abiyyuyafi/).
+I am a blockchain and crypto enthusiast. I am also a software engineer. I love to learn about new things and to share my knowledge with others. You can find me on [GitHub](https://github.com/yafiabiyyu) and [LinkedIn](https://www.linkedin.com/in/abiyyuyafi/).
