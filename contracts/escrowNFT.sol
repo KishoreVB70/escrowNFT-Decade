@@ -53,6 +53,15 @@ contract escrowNFT is Ownable {
         uint256 paymentAmount
     );
 
+    event RejectEscrow(
+        uint256 txId,
+        uint256 tokenId,
+        uint256 paymentAmount,
+        address tokenAddress
+    );
+
+
+
     modifier onlySeller(uint256 _txId) {
         require(
             msg.sender == escrow[_txId].sellerAddress,
@@ -72,6 +81,11 @@ contract escrowNFT is Ownable {
 
     function updateFee(uint256 _fee) external onlyOwner {
         fee = _fee;
+    }
+
+    function claimFee() external onlyOwner {
+        (bool status, ) = payable(msg.sender).call{value: address(this).balance}("");
+        require(status, "Transfer failed");
     }
 
     function generateTxId(
@@ -166,7 +180,12 @@ contract escrowNFT is Ownable {
         );
         IERC721 nft = IERC721(escrow[_txId].tokenAddress);
         escrow[_txId].status = Status.Rejected;
-        nft.transferFrom(address(this), msg.sender, escrow[_txId].tokenId);
+        nft.transferFrom(address(this), escrow[_txId].sellerAddress, escrow[_txId].tokenId);
+        emit RejectEscrow(
+            _txId,
+            escrow[_txId].tokenId,
+            escrow[_txId].paymentAmount,
+            escrow[_txId].tokenAddress);
     }
     
     function _calculateFee(uint256 _paymentAmount) private view returns(uint256 amountAfterFee) {
