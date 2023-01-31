@@ -150,6 +150,8 @@ contract escrowNFT is Ownable {
 
     mapping(uint256 => Escrow) public escrow;
 
+    mapping(uint256 => bool) public usedTxIds;
+
     event NewEscrow(
         uint256 txId,
         uint256 tokenId,
@@ -233,11 +235,13 @@ contract escrowNFT is Ownable {
         address _tokenAddress,
         address _buyerAddress
     ) external {
+        require(!usedTxIds[_txId], "TxId already exists");
         require(_paymentAmount > 0, "Payment amount must be greater than 0");
         require(_tokenAddress != address(0), "Token address cannot be 0x0");
         require(_buyerAddress != address(0), "Buyer address cannot be 0x0");
         IERC721 nft = IERC721(_tokenAddress);
         nft.transferFrom(msg.sender, address(this), _tokenId);
+        usedTxIds[_txId] = true;
         escrow[_txId] = Escrow(
             _tokenId,
             _paymentAmount,
@@ -367,7 +371,13 @@ The `Escrow` struct will be used to store the details of an escrow.
 mapping(uint256 => Escrow) public escrow;
 ```
 
-The `escrow` mapping will be used to map the transaction ID to the Escrow struct.
+The `escrow` mapping will be used to map a transaction ID to the Escrow struct.
+
+```solidity
+mapping(uint256 => bool) public usedTxIds;
+```
+
+The `usedTxIds` mapping will be used to map a transaction ID to a boolean value to track its availability.
 
 ```solidity
 event NewEscrow(
@@ -463,25 +473,27 @@ function createEscrow(
     address _tokenAddress,
     address _buyerAddress
 ) external {
-    require(_paymentAmount > 0, "Payment amount must be greater than 0");
-    require(_tokenAddress != address(0), "Token address cannot be 0x0");
-    require(_buyerAddress != address(0), "Buyer address cannot be 0x0");
-    IERC721 nft = IERC721(_tokenAddress);
-    nft.transferFrom(msg.sender, address(this), _tokenId);
-    escrow[_txId] = Escrow(
-        _tokenId,
-        _paymentAmount,
-        block.timestamp + 1 days,
-        _tokenAddress,
-        _buyerAddress,
-        msg.sender,
-        Status.Pending
-    );
-    emit NewEscrow(_txId, _tokenId, _paymentAmount, _tokenAddress);
+        require(!usedTxIds[_txId], "TxId already exists");
+        require(_paymentAmount > 0, "Payment amount must be greater than 0");
+        require(_tokenAddress != address(0), "Token address cannot be 0x0");
+        require(_buyerAddress != address(0), "Buyer address cannot be 0x0");
+        IERC721 nft = IERC721(_tokenAddress);
+        nft.transferFrom(msg.sender, address(this), _tokenId);
+        usedTxIds[_txId] = true;
+        escrow[_txId] = Escrow(
+            _tokenId,
+            _paymentAmount,
+            block.timestamp + 1 days,
+            _tokenAddress,
+            _buyerAddress,
+            msg.sender,
+            Status.Pending
+        );
+        emit NewEscrow(_txId, _tokenId, _paymentAmount, _tokenAddress);
 }
 ```
 
-`createEscrow` is used to create a new escrow. The function takes the transaction ID, token ID, payment amount, token address, and buyer address as parameters. The function first checks if the payment amount is greater than 0, and check token, buyer address are not 0x0. Then it transfers the NFT from the seller to the contract. Then it creates a new escrow in the `escrow` mapping and emits the `NewEscrow` event.
+`createEscrow` is used to create a new escrow. The function takes the transaction ID, token ID, payment amount, token address, and buyer address as parameters. The function first checks whether the transaction ID is unique, the payment amount is greater than 0, and whether the token and buyer addresses are valid addresses. If the checks have been passed, it then transfers the NFT from the seller to the smart contract. Finally, a new escrow is created and stored in the `escrow` mapping and the `NewEscrow` event is emitted.
 
 ```solidity
 function cancelEscrow(uint256 _txId) external onlySeller(_txId) {
