@@ -1,10 +1,12 @@
+# How to create an Escrow NFT platform on Celo using Eth-Brownie Python.
+
 ## Introduction​
 
 In this tutorial, we will be creating an escrow NFT platform on the Celo network using Eth-Brownie Python. Escrow is a financial arrangement where a third party holds and regulates the transfer of funds or assets between two other parties. In this case, the third party is the smart contract. The two parties are the buyer and the seller. The escrow NFT platform will work like this, the seller will lock NFT in smart contract and the buyer will be able to buy the NFT by paying the price set by the seller. The smart contract will hold the NFT until the buyer pays the price. If the buyer pays the price, the NFT will be transferred to the buyer. If the buyer fails to pay the price, the NFT will be returned to the seller. In this tutorial, we will be using the Celo network, but the same concept can be applied to other evm-compatible blockchain networks.
 
 ## Prerequisites
 
-These tutorials assume that you have some basic knowledge of solidity and python.
+This tutorial assumes that you have some basic knowledge of Solidity and Python.
 
 ## Requirements
 
@@ -24,13 +26,13 @@ This is a list of what we’ll cover 🗒
 
 ## **Step 1:** Project setup
 
-First, we will create a new directory for our project. Open your terminal and run the following command to create a new directory called `escrow-nft` and change directory to it.
+Firstly, we will create a new directory for our project. Open your terminal and run the following command to create a new directory called `escrow-nft` and change directory to it.
 
 ```bash
 mkdir escrow-nft && cd escrow-nft
 ```
 
-next, we will install eth-brownie, python-dotenv, and ganache-cli. Run the following command to install them.
+Next, we will install eth-brownie, python-dotenv, and ganache-cli. Run the following command to install them.
 
 ```bash
 # Install eth-brownie and python-dotenv
@@ -50,7 +52,7 @@ Here's what a successful initialization looks like:
 ![init](images/2.png)
 
 Next, after initializing our project, we will create two files, `brownie-config.yaml` and `.env` in root directory.
-`brownie-config.yaml` is a configuration file for brownie. It contains the default settings for our project. We will use this file to configure our project settings. `.env` is a file that contains environment variables. We will use this file to store our mnemonic phrase. We will use this mnemonic phrase to deploy our contract to the Celo network.
+`brownie-config.yaml` is a configuration file for brownie which will contain the default settings for our project. We will use this file to configure our project settings. `.env` is a file that contains environment variables. We will use this file to store our mnemonic phrase which is required to deploy our smart contract to the Celo network.
 
 `brownie-config.yaml` file
 
@@ -87,9 +89,9 @@ wallets:
 MNEMONIC="your mnemonic phrase"
 ```
 
-if you want to read more about brownie-config.yaml file, you can read it [here](https://eth-brownie.readthedocs.io/en/stable/config.html).
+If you want to read more about brownie-config.yaml file, you can read more about it [here](https://eth-brownie.readthedocs.io/en/stable/config.html).
 
-lastly for this step, we will add Celo network to our brownie project. Run the following command to add Celo network to our brownie project.
+We will also add the mainnet and testnet of the Celo network to our brownie project. Run the following command to add Celo network to our brownie project.
 
 ```bash
 brownie networks add Celo celo-mainnet host=https://forno.celo.org chainid=42220 explorer=https://explorer.celo.org
@@ -103,7 +105,7 @@ You can check if the network has been added by running the following command.
 brownie networks list
 ```
 
-result if the network has been added successfully.
+Results if the network has been added successfully.
 
 ![networks list](images/1.png)
 
@@ -155,7 +157,7 @@ contract escrowNFT is Ownable {
         address tokenAddress
     );
 
-    event CancleEscrow(
+    event CancelEscrow(
         uint256 txId,
         uint256 tokenId,
         uint256 paymentAmount,
@@ -248,7 +250,7 @@ contract escrowNFT is Ownable {
         emit NewEscrow(_txId, _tokenId, _paymentAmount, _tokenAddress);
     }
 
-    function cancleEscrow(uint256 _txId) external onlySeller(_txId) {
+    function cancelEscrow(uint256 _txId) external onlySeller(_txId) {
         require(
             block.timestamp > escrow[_txId].deadline,
             "Deadline not reached"
@@ -260,7 +262,7 @@ contract escrowNFT is Ownable {
         IERC721 nft = IERC721(escrow[_txId].tokenAddress);
         escrow[_txId].status = Status.Cancelled;
         nft.transferFrom(address(this), msg.sender, escrow[_txId].tokenId);
-        emit CancleEscrow(
+        emit CancelEscrow(
             _txId,
             escrow[_txId].tokenId,
             escrow[_txId].paymentAmount,
@@ -318,7 +320,7 @@ Let us analyze the code line by line.
 pragma solidity 0.8.15;
 ```
 
-First line, we declare the SPDX license identifier of the relevant license for the contract. The second line, we declare the solidity version we are using.
+In the first line, we declare the SPDX license identifier of the relevant license for our smart contract. In the second line, we declare the solidity version we are using.
 
 ```solidity
 import "@openzeppelin/contracts/access/Ownable.sol";
@@ -334,7 +336,7 @@ uint256 private escrowDigit = 16;
 uint256 private modulus = 10**escrowDigit;
 ```
 
-The `fee` variable will be used to store the fee percentage. The `escrowDigit` variable will be used to generate a unique transaction ID. The `modulus` variable will be used to generate a unique transaction ID.
+The `fee` variable will be used to store the fee percentage. The `escrowDigit` and `modulus` variables will be used to generate a unique transaction ID.
 
 ```solidity
 enum Status {
@@ -345,7 +347,7 @@ enum Status {
     }
 ```
 
-Enum `Status` will be used to store the status of the escrow.
+The Enum `Status` will be used to store the status of the escrow.
 
 ```solidity
 struct Escrow {
@@ -359,7 +361,7 @@ struct Escrow {
     }
 ```
 
-`Escrow` struct will be used to store the details of the escrow.
+The `Escrow` struct will be used to store the details of an escrow.
 
 ```solidity
 mapping(uint256 => Escrow) public escrow;
@@ -375,7 +377,7 @@ event NewEscrow(
     address tokenAddress
 );
 
-event CancleEscrow(
+event CancelEscrow(
     uint256 txId,
     uint256 tokenId,
     uint256 paymentAmount,
@@ -414,7 +416,7 @@ modifier onlyBuyer(uint256 _txId) {
 }
 ```
 
-These modifiers are used to make sure only the seller or the buyer can call certain functions.
+These modifiers are used to make sure only the seller or the buyer can access and use certain functions.
 
 ```solidity
 function updateFee(uint256 _fee) external onlyOwner {
@@ -482,7 +484,7 @@ function createEscrow(
 `createEscrow` is used to create a new escrow. The function takes the transaction ID, token ID, payment amount, token address, and buyer address as parameters. The function first checks if the payment amount is greater than 0, and check token, buyer address are not 0x0. Then it transfers the NFT from the seller to the contract. Then it creates a new escrow in the `escrow` mapping and emits the `NewEscrow` event.
 
 ```solidity
-function cancleEscrow(uint256 _txId) external onlySeller(_txId) {
+function cancelEscrow(uint256 _txId) external onlySeller(_txId) {
     require(
         block.timestamp > escrow[_txId].deadline,
         "Deadline not reached"
@@ -494,7 +496,7 @@ function cancleEscrow(uint256 _txId) external onlySeller(_txId) {
     IERC721 nft = IERC721(escrow[_txId].tokenAddress);
     escrow[_txId].status = Status.Cancelled;
     nft.transferFrom(address(this), msg.sender, escrow[_txId].tokenId);
-    emit CancleEscrow(
+    emit CancelEscrow(
         _txId,
         escrow[_txId].tokenId,
         escrow[_txId].paymentAmount,
@@ -503,7 +505,7 @@ function cancleEscrow(uint256 _txId) external onlySeller(_txId) {
 }
 ```
 
-`cancleEscrow` function is used to cancel an escrow. The function takes the transaction ID as a parameter. First, function will check if the deadline is reached and the escrow status is pending. If both conditions are true, the function will transfer the NFT back to the seller and emit the `CancleEscrow` event.
+`cancelEscrow` function is used to cancel an escrow. The function takes the transaction ID as a parameter. First, function will check if the deadline is reached and whether the escrow status is still pending. If both conditions are true, the function will transfer the NFT back to the seller and emit the `CancelEscrow` event.
 
 ```solidity
 function payEscrow(uint256 _txId) external payable onlyBuyer(_txId) {
@@ -556,7 +558,7 @@ function _calculateFee(uint256 _paymentAmount) private view returns(uint256 amou
 }
 ```
 
-`_calculateFee` private function is used to calculate the fee amount. The function takes the payment amount as a parameter and returns the amount after fee.
+`_calculateFee` is a private function used to calculate the fee amount. This function takes the payment amount as an argument and return the amount after fee.
 
 ## **Step 4:** Deploy your Contract
 

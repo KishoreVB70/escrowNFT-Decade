@@ -39,7 +39,7 @@ contract escrowNFT is Ownable {
         address tokenAddress
     );
 
-    event CancleEscrow(
+    event CancelEscrow(
         uint256 txId,
         uint256 tokenId,
         uint256 paymentAmount,
@@ -132,7 +132,7 @@ contract escrowNFT is Ownable {
         emit NewEscrow(_txId, _tokenId, _paymentAmount, _tokenAddress);
     }
 
-    function cancleEscrow(uint256 _txId) external onlySeller(_txId) {
+    function cancelEscrow(uint256 _txId) external onlySeller(_txId) {
         require(
             block.timestamp > escrow[_txId].deadline,
             "Deadline not reached"
@@ -144,7 +144,7 @@ contract escrowNFT is Ownable {
         IERC721 nft = IERC721(escrow[_txId].tokenAddress);
         escrow[_txId].status = Status.Cancelled;
         nft.transferFrom(address(this), msg.sender, escrow[_txId].tokenId);
-        emit CancleEscrow(
+        emit CancelEscrow(
             _txId,
             escrow[_txId].tokenId,
             escrow[_txId].paymentAmount,
