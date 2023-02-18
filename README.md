@@ -2,7 +2,7 @@
 
 ## Introduction​
 
-In this tutorial, we will be creating an escrow NFT platform on the Celo network using Eth-Brownie Python. Escrow is a financial arrangement where a third party holds and regulates the transfer of funds or assets between two other parties. In this case, the third party is the smart contract. The two parties are the buyer and the seller. The escrow NFT platform will work like this, the seller will lock NFT in smart contract and the buyer will be able to buy the NFT by paying the price set by the seller. The smart contract will hold the NFT until the buyer pays the price. If the buyer pays the price, the NFT will be transferred to the buyer. If the buyer fails to pay the price, the NFT will be returned to the seller. In this tutorial, we will be using the Celo network, but the same concept can be applied to other evm-compatible blockchain networks.
+In this tutorial, we will be creating an escrow NFT platform on the Celo network using Eth-Brownie Python. Escrow is a financial arrangement where a third party holds and regulates the transfer of funds or assets between two other parties. In this case, the third party is the smart contract. The two parties are the buyer and the seller. The escrow NFT platform will work like this, the seller will lock NFT in the smart contract and the buyer will be able to buy the NFT by paying the price set by the seller. The smart contract will hold the NFT until the buyer pays the price. If the buyer pays the price, the NFT will be transferred to the buyer. If the buyer fails to pay the price, the NFT will be returned to the seller. In this tutorial, we will be using the Celo network, but the same concept can be applied to other evm-compatible blockchain networks.
 
 ## Prerequisites
 
@@ -20,13 +20,12 @@ This is a list of what we’ll cover 🗒
 
 - ✅ **Step 1:** Project setup
 - ✅ **Step 2:** Write project code
-- ✅ **Step 3:** Configure deployment settings
-- ✅ **Step 4:** Deploy your Contract
-- ✅ **Step 5:** Integration with frontend
+- ✅ **Step 3:** Deploy your Contract
+- ✅ **Step 4:** Integration with frontend
 
-## **Step 1:** Project setup
+## Step 1: Project setup
 
-Firstly, we will create a new directory for our project. Open your terminal and run the following command to create a new directory called `escrow-nft` and to change directory to it.
+Firstly, we will create a new directory for our project. Open your terminal and run the following command to create a new directory called `escrow-nft` and to change the directory to it.
 
 ```bash
 mkdir escrow-nft && cd escrow-nft
@@ -51,7 +50,7 @@ brownie init
 Here's what a successful initialization looks like:
 ![init](images/2.png)
 
-Next, after initializing our project, we will create two files, `brownie-config.yaml` and `.env` in root directory.
+Next, after initializing our project, we will create two files, `brownie-config.yaml` and `.env` in the root directory.
 `brownie-config.yaml` is a configuration file for brownie which will contain the default settings for our project. We will use this file to configure our project settings. `.env` is a file that contains environment variables. We will use this file to store our mnemonic phrase which is required to deploy our smart contract to the Celo network.
 
 `brownie-config.yaml` file
@@ -111,9 +110,9 @@ This should be displayed if the network has been added successfully.
 
 You can see that we have added two networks, celo-mainnet and celo-alfajores to our brownie network list.
 
-## **Step 2:** Write project code
+## Step 2: Write project code
 
-In this step, we will write the code for our smart contract. Create a new file called `escrowNFT.sol` in the contracts directory. This is where we will write our smart contract code. Here is an look at what our smart contract code will look like.
+In this step, we will write the code for our smart contract. Create a new file called `escrowNFT.sol` in the contracts directory. This is where we will write our smart contract code. Here is a look at what our smart contract code will look like.
 
 ```solidity
 // SPDX-License-Identifier: MIT
@@ -179,8 +178,6 @@ contract escrowNFT is Ownable {
         uint256 paymentAmount,
         address tokenAddress
     );
-
-
 
     modifier onlySeller(uint256 _txId) {
         require(
@@ -463,7 +460,7 @@ function generateTxId(
 }
 ```
 
-`generateTxId` function is used to generate a unique transaction ID to be used for the escrow. The transaction ID is generated using the seller address, buyer address, NFT address, and the secret. secret parameter is used to make sure the transaction ID is unique for each escrow.
+`generateTxId` function is used to generate a unique transaction ID to be used for the escrow. The transaction ID is generated using the seller address, buyer address, NFT address, and secret. the secret parameter is used to make sure the transaction ID is unique for each escrow.
 
 ```solidity
 function createEscrow(
@@ -541,7 +538,7 @@ function payEscrow(uint256 _txId) external payable onlyBuyer(_txId) {
 }
 ```
 
-`payEscrow` function is used to pay an escrow. The function takes the transaction ID as a parameter. First, function will check if the deadline is not reached and the escrow status is pending and buyer only sends the payment amount equal to the payment amount in the escrow. If all conditions are true, the function will transfer the NFT to the buyer and pay the seller the payment amount minus the fee. Then it emits the `PayEscrow` event.
+`payEscrow` function is used to pay an escrow. The function takes the transaction ID as a parameter. First, the function will check if the deadline is not reached and the escrow status is pending and the buyer only sends the payment amount equal to the payment amount in the escrow. If all conditions are true, the function will transfer the NFT to the buyer and pay the seller the payment amount minus the fee. Then it emits the `PayEscrow` event.
 
 ```solidity
 function rejectEscrow(uint256 _txId) external onlyBuyer(_txId) {
@@ -572,7 +569,7 @@ function _calculateFee(uint256 _paymentAmount) private view returns(uint256 amou
 
 `_calculateFee` is a private function used to calculate the fee amount. This function takes the payment amount as an argument and return the amount after fee.
 
-## **Step 4:** Deploy your Contract
+## Step 3: Deploy your Contract
 
 Now that we have written our smart contract, we need to deploy it to the blockchain. First, we need to compile our smart contract, and then we will deploy it to the blockchain. Use the following command to compile the smart contract.
 
@@ -583,7 +580,7 @@ brownie compile
 This should be displayed if the compilation is successful
 ![brownie compile](images/3.png)
 
-Now, we need to deploy our smart contract to the blockchain. First create a new file `scripts/deploy.py` and add the following code to it.
+Now, we need to deploy our smart contract to the blockchain. First, create a new file `scripts/deploy.py` and add the following code to it.
 
 ```python
 from brownie import accounts, config, escrowNFT
@@ -601,7 +598,7 @@ def main():
     print("Contract deployed to:", contract.address)
 ```
 
-`main` function is used to deploy the contract. First, we get the account to use. Then we deploy the contract and wait for the transaction to be mined. Finally, we print the contract address. Now, we need to deploy the contract. Use the following command to deploy the contract.
+The `main` function is used to deploy the contract. First, we get the account to use. Then we deploy the contract and wait for the transaction to be mined. Finally, we print the contract address. Now, we need to deploy the contract. Use the following command to deploy the contract.
 
 ```bash
 # Deploy the contract to the Celo Alfajores testnet
@@ -614,7 +611,7 @@ brownie run scripts/main.py --network celo-mainnet
 This should be displayed if the deployment is successful
 ![brownie run](images/4.png)
 
-## **Step 5:** Integration with frontend
+## Step 4: Integration with frontend
 
 Now that we have deployed our smart contract to the blockchain, we need to integrate it with our frontend. You can clone the frontend we have created for this tutorial. Use the following command to clone the frontend.
 
@@ -650,4 +647,4 @@ For your next steps, if you are a Python developer and want to learn more about 
 
 ## About the Author
 
-I am a blockchain and crypto enthusiast. I am also a software engineer. I love to learn about new things and to share my knowledge with others. You can find me on [GitHub](https://github.com/yafiabiyyu) and [LinkedIn](https://www.linkedin.com/in/abiyyuyafi/).
+I am a blockchain and crypto enthusiast. I am also a software engineer. I love to learn about new things and share my knowledge with others. You can find me on [GitHub](https://github.com/yafiabiyyu) and [LinkedIn](https://www.linkedin.com/in/abiyyuyafi/).
